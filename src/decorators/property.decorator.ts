@@ -12,9 +12,18 @@ export function type(type: string) {
 }
 
 export function getName(target: any, propertyKey: string) {
-  return Reflect.getMetadata(nameMetaDatakey, target, propertyKey);
+  try {
+    return Reflect.getMetadata(nameMetaDatakey, target, propertyKey);
+  } catch (ex) {
+    console.error(`Property '${name}' not found and will be filtered out of the query`);
+    return null;
+  }
 }
 
 export function getType(target: any, propertyKey: string) {
-  return Reflect.getMetadata(typeMetaDatakey, target, propertyKey);
+  try {
+    return Reflect.getMetadata(typeMetaDatakey, target, propertyKey);
+  } catch (ex) {
+    return 'string';
+  }
 }

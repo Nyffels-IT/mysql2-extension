@@ -5,5 +5,10 @@ export function table(name: string) {
 }
 
 export function getTable(target: any) {
-  return Reflect.getMetadata(tableMetaDataKey, target.constructor);
+  try {
+    return Reflect.getMetadata(tableMetaDataKey, target.constructor);
+  } catch (ex) {
+    console.error(`Table not known for type '${target.constructor.name}'`);
+    return null;
+  }
 }
