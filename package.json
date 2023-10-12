@@ -1,0 +1,31 @@
+{
+  "name": "@nyffels/mysql2-extension",
+  "version": "1.0.0",
+  "description": "A extension library usable for all mysql npm packages that adds mapping of classes and sql generation functions.",
+  "private": false,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "repository": {
+    "url": "https://github.com/Nyffels-IT/nodejs-mysql2-wrapper",
+    "type": "git"
+  },
+  "scripts": {
+    "build": "tsc --build"
+  },
+  "keywords": [
+    "mysql",
+    "extension"
+  ],
+  "author": "Nyffels BV",
+  "license": "MIT",
+  "devDependencies": {
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "@types/express": "^4.17.19",
+    "@types/lodash": "^4.14.199",
+    "express": "^4.18.2",
+    "lodash": "^4.17.21",
+    "reflect-metadata": "^0.1.13"
+  }
+}
