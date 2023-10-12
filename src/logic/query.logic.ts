@@ -77,11 +77,11 @@ export function parseValue(target: any, property: string, value: any) {
   }
 }
 
-export function queryResultToObject(target: any, property: string, value: any, symbol = '=') {
+export function compareProperties(target: any, property: string, value: any, symbol = '=') {
   return `${getName(target, property)} ${symbol} ${parseValue(target, property, value)}`;
 }
 
-export function queryResultToClass(target: any, results: any[]) {
+export function queryResultToObject(target: any, results: any[]) {
   const properties = Object.getOwnPropertyNames(target);
   const result: any[] = [];
 
