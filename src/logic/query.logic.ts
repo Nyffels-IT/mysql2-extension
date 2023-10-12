@@ -23,13 +23,7 @@ export function getSelectQuery(target: any, properties: string[] = [], where: st
       query +=
         ' ORDER BY ' +
         (options.order ?? [])
-          .filter((order) => {
-            const name = getName(target, order.property);
-            if (!name) {
-              console.error(`Property '${name}' not found and will be filtered out of the query`);
-            }
-            return !!name;
-          })
+          .filter((order) => !!getName(target, order.property))
           .map((order) => {
             const name = getName(target, order.property);
             return `${name} ${!_.isNil(order.property) ? order.property : 'ASC'}`;
@@ -52,15 +46,12 @@ export function getSelectQuery(target: any, properties: string[] = [], where: st
 export function getInsertQuery(target: any, values: InsertValue[]) {
   let propertyQueries: string[] = [];
   let valueQueries: string[] = [];
-  values.forEach((value) => {
-    const propertyName = getName(target, value.property);
-    if (!propertyName) {
-      console.error(`Property '${name}' not found and will be filtered out of the query`);
-    } else {
-      propertyQueries.push(propertyName);
+  values
+    .filter((value) => !!getName(target, value.property))
+    .forEach((value) => {
+      propertyQueries.push(getName(target, value.property));
       valueQueries.push(parseValue(target, value.property, value.value));
-    }
-  });
+    });
 
   if ((propertyQueries ?? []).length <= 0 || (valueQueries ?? []).length <= 0) {
     console.error(`Generation string with requested without values for table '${getTable(target)}'.`);

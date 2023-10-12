@@ -15,7 +15,7 @@ export function getName(target: any, propertyKey: string) {
   try {
     return Reflect.getMetadata(nameMetaDatakey, target, propertyKey);
   } catch (ex) {
-    console.error(`Property '${name}' not found and will be filtered out of the query`);
+    console.error(`Property '${name}' not found and will return null or be filtered out of the query`);
     return null;
   }
 }
