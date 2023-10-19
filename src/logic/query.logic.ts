@@ -26,7 +26,7 @@ export function getSelectQuery(target: any, properties: string[] = [], where: st
           .filter((order) => !!getName(target, order.property))
           .map((order) => {
             const name = getName(target, order.property);
-            return `${name} ${!_.isNil(order.property) ? order.property : 'ASC'}`;
+            return `${name} ${!_.isNil(order.property) ? order.direction : 'ASC'}`;
           })
           .join(', ');
     }
