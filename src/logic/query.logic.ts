@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { getTable } from '../decorators/class.decorator';
 import { getName, getType } from '../decorators/property.decorator';
-import { InsertValue, SelectQueryOptions } from '../models';
+import { InsertValue, SelectQueryOptions, UpdateValue } from '../models';
 import { parseBoolean, parseDate, parseNumber, parseString } from './parsers.logic';
 
 export function getSelectQuery(target: any, properties: string[] = [], where: string = '', options: SelectQueryOptions | null = null) {
@@ -54,11 +54,32 @@ export function getInsertQuery(target: any, values: InsertValue[]) {
     });
 
   if ((propertyQueries ?? []).length <= 0 || (valueQueries ?? []).length <= 0) {
-    console.error(`Generation string with requested without values for table '${getTable(target)}'.`);
+    console.error(`Generation for insert query requested without values for table '${getTable(target)}'.`);
     return;
   }
 
   let query = `INSERT INTO ${getTable(target)} (${propertyQueries.join(', ')}) VALUES (${valueQueries.join(', ')})`;
+  return query;
+}
+
+export function getUpdateQuery(target: any, values: UpdateValue[], where: string = '') {
+  if ((values ?? []).length <= 0) {
+    console.error(`Generation for update query requested without values for table '${getTable(target)}'.`);
+    return;
+  }
+
+  const updateString = values
+    .map((value) => {
+      const valueProperty = getName(target, value.property);
+      const valueValue = parseValue(target, value.property, value.value);
+      return `${valueProperty} = ${valueValue}`;
+    })
+    .join(', ');
+
+  let query = `UPDATE ${getTable(target)} SET ${updateString}`;
+  if ((where ?? '').length > 0) {
+    query += ` WHERE ${where}`;
+  }
   return query;
 }
 
