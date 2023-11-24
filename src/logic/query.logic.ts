@@ -90,13 +90,30 @@ export function getInsertValuesFromTarget(target: any) {
   return values;
 }
 
-export function getUpdateValuesFromTarget(target: any) {
+export interface GetUpdateValuesFromTargetOptions {
+  compareTarget?: any;
+  skipKeys?: string[];
+}
+
+export function getUpdateValuesFromTarget(target: any, options: GetUpdateValuesFromTargetOptions) {
   const values: UpdateValue[] = [];
-  Object.keys(target).forEach((key) => {
-    values.push({
+  let keys = Object.keys(target);
+  if (!_.isNil(options) && (options.skipKeys ?? []).length > 0) {
+    keys = keys.filter((k) => !(options.skipKeys ?? []).includes(k));
+  }
+  keys.forEach((key) => {
+    const value: UpdateValue = {
       property: key,
       value: target[key],
-    });
+    };
+
+    if (!_.isNil(options) && !_.isNil(options.compareTarget)) {
+      if (target[key] !== options.compareTarget[key]) {
+        values.push(value);
+      }
+    } else {
+      values.push(value);
+    }
   });
   return values;
 }

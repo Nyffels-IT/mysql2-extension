@@ -1,6 +1,6 @@
 {
   "name": "@nyffels/mysql2-extension",
-  "version": "1.4.0",
+  "version": "1.5.0",
   "description": "A extension library usable for all mysql npm packages that adds mapping of classes and sql generation functions.",
   "private": false,
   "main": "dist/index.js",
