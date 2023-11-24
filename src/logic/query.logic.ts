@@ -46,6 +46,7 @@ export function getSelectQuery(target: any, properties: string[] = [], where: st
 export function getInsertQuery(target: any, values: InsertValue[]) {
   let propertyQueries: string[] = [];
   let valueQueries: string[] = [];
+
   values
     .filter((value) => !!getName(target, value.property))
     .forEach((value) => {
@@ -63,11 +64,6 @@ export function getInsertQuery(target: any, values: InsertValue[]) {
 }
 
 export function getUpdateQuery(target: any, values: UpdateValue[], where: string = '') {
-  if ((values ?? []).length <= 0) {
-    console.error(`Generation for update query requested without values for table '${getTable(target)}'.`);
-    return;
-  }
-
   const updateString = values
     .map((value) => {
       const valueProperty = getName(target, value.property);
@@ -81,6 +77,28 @@ export function getUpdateQuery(target: any, values: UpdateValue[], where: string
     query += ` WHERE ${where}`;
   }
   return query;
+}
+
+export function getInsertValuesFromTarget(target: any) {
+  const values: InsertValue[] = [];
+  Object.keys(target).forEach((key) => {
+    values.push({
+      property: key,
+      value: target[key],
+    });
+  });
+  return values;
+}
+
+export function getUpdateValuesFromTarget(target: any) {
+  const values: UpdateValue[] = [];
+  Object.keys(target).forEach((key) => {
+    values.push({
+      property: key,
+      value: target[key],
+    });
+  });
+  return values;
 }
 
 export function parseValue(target: any, property: string, value: any) {
