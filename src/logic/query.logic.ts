@@ -138,7 +138,7 @@ export function compareProperties(target: any, property: string, value: any, sym
 }
 
 export function comparePropertiesArray(target: any, property: string, values: any[]) {
-  return `${getName(target, property)} IN [${values.map((v) => parseValue(target, property, v)).join(',')}]`;
+  return `${getName(target, property)} IN (${values.map((v) => parseValue(target, property, v)).join(',')})`;
 }
 
 export function queryResultToObject(target: any, results: any[]) {
