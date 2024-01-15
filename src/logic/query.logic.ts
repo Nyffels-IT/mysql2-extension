@@ -4,6 +4,14 @@ import { getName, getType } from '../decorators/property.decorator';
 import { InsertValue, SelectQueryOptions, UpdateValue } from '../models';
 import { parseBoolean, parseDate, parseNumber, parseString } from './parsers.logic';
 
+/**
+ * Generate a select query
+ * @param target The target class with mysql decorations
+ * @param properties The properties you wish to get from the select. Leave empty for all (wildcard *)
+ * @param where Add a where string without "WHERE". You can use the where query builders for generations
+ * @param options Add options to the select query like limits, orders, offsets
+ * @returns A generated select query as a string
+ */
 export function getSelectQuery(target: any, properties: string[] = [], where: string = '', options: SelectQueryOptions | null = null) {
   let props = '';
   if ((properties ?? []).length > 0) {
@@ -43,6 +51,12 @@ export function getSelectQuery(target: any, properties: string[] = [], where: st
   return query;
 }
 
+/**
+ * Generate an insert query for a single row
+ * @param target The target class with mysql decorations
+ * @param values The values for the insert
+ * @returns A genrated insert query as a string
+ */
 export function getInsertQuery(target: any, values: InsertValue[]) {
   let propertyQueries: string[] = [];
   let valueQueries: string[] = [];
@@ -63,6 +77,39 @@ export function getInsertQuery(target: any, values: InsertValue[]) {
   return query;
 }
 
+/**
+ * Generate an insert query for a multiple rows
+ * @param target The target class with mysql decorations
+ * @param values The values for the insert
+ * @returns A genrated insert query as a string
+ */
+export function getBulkInsertQuery(target: any, values: InsertValue[][]) {
+  if ((values ?? []).length <= 0) {
+    console.error(`Generation for bulk insert query requested without values for table '${getTable(target)}'.`);
+  }
+
+  const properties = values[0].filter((value) => !!getName(target, value.property)).map((value) => getName(target, value.property));
+  const insertValues = values.map((row) => {
+    const rowValues: string[] = [];
+    for (let value of row) {
+      if (!!getName(target, value.property)) {
+        rowValues.push(parseValue(target, value.property, value.value));
+      }
+    }
+    return rowValues;
+  });
+
+  let query = `INSERT INTO ${getTable(target)} (${properties.join(',')}) VALUES ${insertValues.map((insertValue) => '(' + insertValue.join(',') + ')').join(',')}`;
+  return query;
+}
+
+/**
+ * Generate an update query
+ * @param target The target class with mysql decorations
+ * @param values The values you wish to update
+ * @param where Add a where string without "WHERE". You can use the where query builders for generations
+ * @returns A generated update query as a string
+ */
 export function getUpdateQuery(target: any, values: UpdateValue[], where: string = '') {
   const updateString = values
     .map((value) => {
@@ -73,6 +120,20 @@ export function getUpdateQuery(target: any, values: UpdateValue[], where: string
     .join(', ');
 
   let query = `UPDATE ${getTable(target)} SET ${updateString}`;
+  if ((where ?? '').length > 0) {
+    query += ` WHERE ${where}`;
+  }
+  return query;
+}
+
+/**
+ * Generate an delete query
+ * @param target The target class with mysql decorations
+ * @param where Add a where string without "WHERE". You can use the where query builders for generations
+ * @returns A generated delete query as a string
+ */
+export function getDeleteQuery(target: any, where: string = '') {
+  let query = `DELETE FROM ${getTable(target)}`;
   if ((where ?? '').length > 0) {
     query += ` WHERE ${where}`;
   }
