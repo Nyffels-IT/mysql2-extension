@@ -202,7 +202,13 @@ export function comparePropertiesArray(target: any, property: string, values: an
   return `${getName(target, property)} IN (${values.map((v) => parseValue(target, property, v)).join(',')})`;
 }
 
-export function queryResultToObject(target: any, results: any[]) {
+/**
+ * Convert a query result to an object.
+ * @param target The target class with mysql decorations
+ * @param results The query results received from the mysql query
+ * @returns A generated object from the target class value. 
+ */
+export function queryResultToObject<T = any>(target: any, results: any[]) {
   const properties = Object.getOwnPropertyNames(target);
   const result: any[] = [];
 
@@ -217,5 +223,5 @@ export function queryResultToObject(target: any, results: any[]) {
     result.push(resultObject);
   });
 
-  return result;
+  return (result as T[]);
 }
