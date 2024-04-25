@@ -1,4 +1,5 @@
 import 'reflect-metadata';
+import { propertyType } from '../models';
 
 const nameMetaDatakey = Symbol('name');
 const typeMetaDatakey = Symbol('type');
@@ -7,7 +8,7 @@ export function name(name: string) {
   return Reflect.metadata(nameMetaDatakey, name);
 }
 
-export function type(type: string) {
+export function type(type: propertyType) {
   return Reflect.metadata(typeMetaDatakey, type);
 }
 
@@ -20,7 +21,7 @@ export function getName(target: any, propertyKey: string) {
   }
 }
 
-export function getType(target: any, propertyKey: string) {
+export function getType(target: any, propertyKey: string): propertyType {
   try {
     return Reflect.getMetadata(typeMetaDatakey, target, propertyKey);
   } catch (ex) {
